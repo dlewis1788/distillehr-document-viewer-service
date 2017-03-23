@@ -4,10 +4,12 @@ buildscript {
 	}
 	repositories {
         maven { url "https://psmvn1.projectivesoftware.com:8443/repository/iima-maven-repository-1/" }
+        maven { url "http://repo.spring.io/plugins-release" }
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath('se.transmode.gradle:gradle-docker:1.2')
+        classpath('org.springframework.build.gradle:propdeps-plugin:0.0.7')
 	}
 }
 
@@ -15,6 +17,7 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'idea'
 apply plugin: 'docker'
+apply plugin: 'propdeps'
 
 jar {
 	baseName = 'distillehr-document-viewer-service'
@@ -25,6 +28,7 @@ sourceCompatibility = 1.8
 
 repositories {
     maven { url "https://psmvn1.projectivesoftware.com:8443/repository/iima-maven-repository-1/" }
+    maven { url "http://maven.vaadin.com/vaadin-addons" }
 }
 
 dependencies {
@@ -32,16 +36,25 @@ dependencies {
 	compile('org.springframework.cloud:spring-cloud-starter-config')
 	compile('org.springframework.cloud:spring-cloud-starter-eureka')
 	compile('org.springframework.cloud:spring-cloud-starter-ribbon')
-	compile('org.springframework.boot:spring-boot-starter-security')
+//	compile('org.springframework.boot:spring-boot-starter-security')
+	compile('org.springframework.cloud:spring-cloud-starter-eureka')
+//    compile('org.springframework.cloud:spring-cloud-starter-feign')
+	compile('org.springframework.cloud:spring-cloud-starter-config')
+    compile('org.springframework.boot:spring-boot-starter-data-rest')
 	compile('com.vaadin:vaadin-spring-boot-starter')
 	compile('org.springframework.boot:spring-boot-starter-web')
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+    compile group: 'org.vaadin.addons', name: 'pdfviewer', version: '1.2.0'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+    optional('org.springframework.boot:spring-boot-configuration-processor')
 }
+
+compileJava.dependsOn(processResources)
 
 dependencyManagement {
 	imports {
-		mavenBom "com.vaadin:vaadin-bom:8.0.0"
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR5"
+		mavenBom "com.vaadin:vaadin-bom:8.0.3"
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR6"
 	}
 }
 

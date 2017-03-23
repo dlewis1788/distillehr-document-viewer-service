@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "com.projectivesoftware.viewer.service.document-storage-service.page-size",
+      "type": "java.lang.Long",
+      "description": "Specifies page size to use for Spring Data REST calls in DocumentStorageService."
+    }
+  ]
+}
