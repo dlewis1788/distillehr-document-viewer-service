@@ -3,6 +3,7 @@ package com.projectivesoftware.viewer.configuration;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.MediaTypes;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 @Configuration
 public class RestTemplateFactory {
 
+    @LoadBalanced
     @Bean
     public RestTemplate getLoadBalancedRestTemplate(RestTemplateBuilder restTemplateBuilder) {
         ObjectMapper mapper = new ObjectMapper();

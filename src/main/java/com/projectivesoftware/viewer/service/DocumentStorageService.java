@@ -50,7 +50,7 @@ public class DocumentStorageService {
         logger.info("Page is " + offset / pageSize);
         logger.info("Limit is " + limit);
 
-        String url = "http://172.16.81.151:8081/documents/search/patientId?patientId={patientId}&page={page}&limit={limit}&size={pageSize}";
+        String url = "http://distillehr-document-storage-service/documents/search/patientId?patientId={patientId}&page={page}&limit={limit}&size={pageSize}";
 
         for (DocumentSort documentSort : documentSortList) {
             logger.info("Processing " + documentSort.toString());
@@ -69,7 +69,7 @@ public class DocumentStorageService {
         Map<String, String> parameterMap = new HashMap<>();
         parameterMap.put("patientId", Long.toString(patientId));
         logger.info("Getting document count for " + patientId);
-        ResponseEntity<PagedResources<Document>> documentResponseEntity = restTemplate.exchange("http://172.16.81.151:8081/documents/search/patientId?patientId={patientId}&page=0&size=1", HttpMethod.GET, HttpEntity.EMPTY, new TypeReferences.PagedResourcesType<Document>() {}, parameterMap);
+        ResponseEntity<PagedResources<Document>> documentResponseEntity = restTemplate.exchange("http://distillehr-document-storage-service/documents/search/patientId?patientId={patientId}&page=0&size=1", HttpMethod.GET, HttpEntity.EMPTY, new TypeReferences.PagedResourcesType<Document>() {}, parameterMap);
         long documentCount = documentResponseEntity.getBody().getMetadata().getTotalElements();
         logger.info("Returned document count is " + documentCount);
         return documentCount;
