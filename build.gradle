@@ -43,7 +43,6 @@ dependencies {
 	compile('com.vaadin:vaadin-spring-boot-starter')
 	compile('org.springframework.boot:spring-boot-starter-web')
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
-    compile group: 'org.vaadin.addons', name: 'pdfviewer', version: '1.2.0'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
     optional('org.springframework.boot:spring-boot-configuration-processor')
 }

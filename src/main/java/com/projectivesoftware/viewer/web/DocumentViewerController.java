@@ -1,6 +1,7 @@
 package com.projectivesoftware.viewer.web;
 
 import com.projectivesoftware.viewer.service.DocumentStorageService;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @RestController("/documentViewer")
 public class DocumentViewerController {
@@ -24,12 +27,12 @@ public class DocumentViewerController {
     }
 
     @RequestMapping(path = "/document/{documentId}", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getDocumentContent(@PathVariable("documentId") Long documentId) {
+    public ResponseEntity<byte[]> getDocumentContent(@PathVariable("documentId") Long documentId) throws IOException {
         HttpHeaders httpHeaders = new HttpHeaders();
 
         httpHeaders.setContentType(MediaType.APPLICATION_PDF);
         httpHeaders.setCacheControl("must-validate, post-check=0, pre-check=0");
 
-        return new ResponseEntity<>(documentStorageService.getDocumentContent(documentId), httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(IOUtils.toByteArray(documentStorageService.getDocumentContent(documentId).getStream()), httpHeaders, HttpStatus.OK);
     }
 }

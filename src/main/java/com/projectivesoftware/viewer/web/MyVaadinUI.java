@@ -8,19 +8,20 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.SortOrder;
-import com.vaadin.server.ExternalResource;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import com.vaadin.ui.renderers.ButtonRenderer;
+import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @SpringUI
-@Theme("tests-valo-metro")
+@Theme(ValoTheme.THEME_NAME)
 public class MyVaadinUI extends UI {
 
     @Autowired
@@ -44,7 +45,7 @@ public class MyVaadinUI extends UI {
             Window window = new Window();
             window.setWidth("90%");
             window.setHeight("90%");
-            BrowserFrame e = new BrowserFrame("PDF File", new ExternalResource("http://172.16.81.151:8082/document/" + clickEvent.getItem().getDocumentId()));
+            BrowserFrame e = new BrowserFrame("PDF File", new StreamResource(documentStorageService.getDocumentContent(clickEvent.getItem().getDocumentId()), "foo.pdf"));
             e.setWidth("100%");
             e.setHeight("100%");
             window.setContent(e);

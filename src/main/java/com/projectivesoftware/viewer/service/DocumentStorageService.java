@@ -2,6 +2,7 @@ package com.projectivesoftware.viewer.service;
 
 import com.projectivesoftware.viewer.domain.Document;
 import com.projectivesoftware.viewer.domain.DocumentSort;
+import com.projectivesoftware.viewer.domain.DocumentStreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,11 +78,17 @@ public class DocumentStorageService {
         return documentCount;
     }
 
-    public byte[] getDocumentContent(Long documentId) {
+    public DocumentStreamSource getDocumentContent(Long documentId) {
         Map<String, String> parameterMap = new HashMap<>();
         parameterMap.put("documentId", documentId.toString());
         logger.info("Getting document content for " + documentId);
         ResponseEntity<byte[]> documentContentEntity = restTemplate.exchange("http://distillehr-document-storage-service/document/content/{documentId}", HttpMethod.GET, HttpEntity.EMPTY, byte[].class, parameterMap);
-        return documentContentEntity.getBody();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try {
+            byteArrayOutputStream.write(documentContentEntity.getBody());
+            return new DocumentStreamSource(byteArrayOutputStream);
+        } catch (IOException e) {
+            return null;
+        }
     }
 }
