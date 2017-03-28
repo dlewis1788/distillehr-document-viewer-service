@@ -44,7 +44,7 @@ public class MyVaadinUI extends UI {
             Window window = new Window();
             window.setWidth("90%");
             window.setHeight("90%");
-            BrowserFrame e = new BrowserFrame("PDF File", new ExternalResource("http://www.adobe.com/content/dam/Adobe/en/devnet/acrobat/pdfs/pdf_open_parameters.pdf"));
+            BrowserFrame e = new BrowserFrame("PDF File", new ExternalResource("http://172.16.81.151:8082/document/" + clickEvent.getItem().getDocumentId()));
             e.setWidth("100%");
             e.setHeight("100%");
             window.setContent(e);
