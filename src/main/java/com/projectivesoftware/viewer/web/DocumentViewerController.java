@@ -1,6 +1,6 @@
 package com.projectivesoftware.viewer.web;
 
-import com.projectivesoftware.viewer.service.DocumentStorageService;
+import com.projectivesoftware.viewer.service.DocumentStorageServiceClient;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -18,12 +18,12 @@ import java.io.IOException;
 @RestController("/documentViewer")
 public class DocumentViewerController {
 
-    private final DocumentStorageService documentStorageService;
+    private final DocumentStorageServiceClient documentStorageServiceClient;
 
     @Autowired
-    public DocumentViewerController(DocumentStorageService documentStorageService) {
-        Assert.notNull(documentStorageService, "documentStorageService must not be null!");
-        this.documentStorageService = documentStorageService;
+    public DocumentViewerController(DocumentStorageServiceClient documentStorageServiceClient) {
+        Assert.notNull(documentStorageServiceClient, "documentStorageService must not be null!");
+        this.documentStorageServiceClient = documentStorageServiceClient;
     }
 
     @RequestMapping(path = "/document/{documentId}", method = RequestMethod.GET)
@@ -33,6 +33,6 @@ public class DocumentViewerController {
         httpHeaders.setContentType(MediaType.APPLICATION_PDF);
         httpHeaders.setCacheControl("must-validate, post-check=0, pre-check=0");
 
-        return new ResponseEntity<>(IOUtils.toByteArray(documentStorageService.getDocumentContent(documentId).getStream()), httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(IOUtils.toByteArray(documentStorageServiceClient.getDocumentContent(documentId).getStream()), httpHeaders, HttpStatus.OK);
     }
 }

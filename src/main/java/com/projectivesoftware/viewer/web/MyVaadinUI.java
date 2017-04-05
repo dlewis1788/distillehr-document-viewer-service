@@ -3,7 +3,7 @@ package com.projectivesoftware.viewer.web;
 import com.projectivesoftware.viewer.domain.Document;
 import com.projectivesoftware.viewer.domain.DocumentFilter;
 import com.projectivesoftware.viewer.domain.DocumentSort;
-import com.projectivesoftware.viewer.service.DocumentStorageService;
+import com.projectivesoftware.viewer.service.DocumentStorageServiceClient;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.provider.ConfigurableFilterDataProvider;
 import com.vaadin.data.provider.DataProvider;
@@ -25,7 +25,7 @@ import java.util.List;
 public class MyVaadinUI extends UI {
 
     @Autowired
-    private DocumentStorageService documentStorageService;
+    private DocumentStorageServiceClient documentStorageServiceClient;
 
     public MyVaadinUI() {
 
@@ -45,7 +45,7 @@ public class MyVaadinUI extends UI {
             Window window = new Window();
             window.setWidth("90%");
             window.setHeight("90%");
-            BrowserFrame e = new BrowserFrame("PDF File", new StreamResource(documentStorageService.getDocumentContent(clickEvent.getItem().getDocumentId()), "foo.pdf"));
+            BrowserFrame e = new BrowserFrame("PDF File", new StreamResource(documentStorageServiceClient.getDocumentContent(clickEvent.getItem().getDocumentId()), "foo.pdf"));
             e.setWidth("100%");
             e.setHeight("100%");
             window.setContent(e);
@@ -63,11 +63,11 @@ public class MyVaadinUI extends UI {
                         documentSortList.add(documentSort);
                     }
                     DocumentFilter documentFilter = query.getFilter().orElse(null);
-                    return documentStorageService.getPagedDocumentList(query.getOffset(), query.getLimit(), documentFilter != null ? documentFilter.patientId : null, documentSortList);
+                    return documentStorageServiceClient.getPagedDocumentList(query.getOffset(), query.getLimit(), documentFilter != null ? documentFilter.patientId : null, documentSortList);
                 },
                 query -> {
                     DocumentFilter documentFilter = query.getFilter().orElse(null);
-                    return (int) documentStorageService.getDocumentCount(documentFilter != null ? documentFilter.patientId : null);
+                    return (int) documentStorageServiceClient.getDocumentCount(documentFilter != null ? documentFilter.patientId : null);
                 }
         );
 

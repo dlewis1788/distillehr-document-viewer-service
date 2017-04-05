@@ -25,17 +25,17 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 @Service
-public class DocumentStorageService {
+public class DocumentStorageServiceClient {
 
-    protected static final Log logger = LogFactory.getLog(DocumentStorageService.class);
+    protected static final Log logger = LogFactory.getLog(DocumentStorageServiceClient.class);
 
     private final RestTemplate restTemplate;
 
     private final Integer pageSize;
 
     @Autowired
-    public DocumentStorageService(RestTemplate restTemplate,
-                                  @Value("${com.projectivesoftware.viewer.service.document-storage-service.page-size}")
+    public DocumentStorageServiceClient(RestTemplate restTemplate,
+                                        @Value("${com.projectivesoftware.viewer.service.document-storage-service.page-size}")
                                           Integer pageSize) {
         Assert.notNull(restTemplate, "restTemplate must not be null!");
         Assert.notNull(restTemplate, "pageSize must not be null!");
