@@ -34,7 +34,6 @@ public class DocumentStorageServiceClient {
     public DocumentStorageServiceClient(RestTemplate restTemplate,
                                         IdentifierMappingRepository identifierMappingRepository) {
         Assert.notNull(restTemplate, "restTemplate must not be null!");
-        Assert.notNull(restTemplate, "pageSize must not be null!");
         Assert.notNull(identifierMappingRepository, "identifierMappingRepository must not be null!");
         this.restTemplate = restTemplate;
         this.identifierMappingRepository = identifierMappingRepository;
