@@ -33,22 +33,22 @@ sourceCompatibility = 1.8
 
 repositories {
     maven { url "https://psmvn1.projectivesoftware.com:8443/repository/iima-maven-repository-1/" }
-    maven { url "http://maven.vaadin.com/vaadin-addons" }
 }
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-data-rest')
 	compile('org.springframework.cloud:spring-cloud-starter-config')
 	compile('org.springframework.cloud:spring-cloud-starter-eureka')
 	compile('org.springframework.cloud:spring-cloud-starter-ribbon')
-//	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.cloud:spring-cloud-starter-eureka')
 	compile('org.springframework.cloud:spring-cloud-starter-config')
     compile('org.springframework.boot:spring-boot-starter-data-rest')
-	compile('com.vaadin:vaadin-spring-boot-starter')
 	compile('org.springframework.boot:spring-boot-starter-web')
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
+	runtime('com.h2database:h2')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
     optional('org.springframework.boot:spring-boot-configuration-processor')
 }
@@ -57,7 +57,6 @@ compileJava.dependsOn(processResources)
 
 dependencyManagement {
 	imports {
-		mavenBom "com.vaadin:vaadin-bom:8.0.3"
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Dalston.RELEASE"
 	}
 }

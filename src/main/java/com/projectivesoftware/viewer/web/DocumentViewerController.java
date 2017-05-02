@@ -1,5 +1,6 @@
 package com.projectivesoftware.viewer.web;
 
+import com.projectivesoftware.viewer.domain.Document;
 import com.projectivesoftware.viewer.service.DocumentStorageServiceClient;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController("/documentViewer")
 public class DocumentViewerController {
@@ -34,5 +36,15 @@ public class DocumentViewerController {
         httpHeaders.setCacheControl("must-validate, post-check=0, pre-check=0");
 
         return new ResponseEntity<>(IOUtils.toByteArray(documentStorageServiceClient.getDocumentContent(documentId).getStream()), httpHeaders, HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/documentList/{patientId}", method = RequestMethod.GET)
+    public ResponseEntity<List<Document>> getDocumentList(@PathVariable("patientId") Long patientId) throws Exception {
+        return documentStorageServiceClient.getDocumentList(patientId);
+    }
+
+    @RequestMapping(path = "/retrieveDocumentList/cernerMillennium/person/{personId}", method = RequestMethod.GET)
+    public ResponseEntity<List<Document>> retrieveDocumentList(@PathVariable("personId") Long personId) throws Exception {
+        return documentStorageServiceClient.retrieveDocumentList(personId.toString());
     }
 }

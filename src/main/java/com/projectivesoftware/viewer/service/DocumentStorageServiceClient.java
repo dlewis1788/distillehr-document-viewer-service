@@ -1,20 +1,18 @@
 package com.projectivesoftware.viewer.service;
 
-import com.projectivesoftware.viewer.domain.Document;
-import com.projectivesoftware.viewer.domain.DocumentSort;
-import com.projectivesoftware.viewer.domain.DocumentStreamSource;
+import com.projectivesoftware.viewer.domain.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.TypeReferences;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayOutputStream;
@@ -22,7 +20,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 @Service
 public class DocumentStorageServiceClient {
@@ -31,41 +28,51 @@ public class DocumentStorageServiceClient {
 
     private final RestTemplate restTemplate;
 
-    private final Integer pageSize;
+    private final IdentifierMappingRepository identifierMappingRepository;
 
     @Autowired
     public DocumentStorageServiceClient(RestTemplate restTemplate,
-                                        @Value("${com.projectivesoftware.viewer.service.document-storage-service.page-size}")
-                                          Integer pageSize) {
+                                        IdentifierMappingRepository identifierMappingRepository) {
         Assert.notNull(restTemplate, "restTemplate must not be null!");
         Assert.notNull(restTemplate, "pageSize must not be null!");
+        Assert.notNull(identifierMappingRepository, "identifierMappingRepository must not be null!");
         this.restTemplate = restTemplate;
-        this.pageSize = pageSize;
+        this.identifierMappingRepository = identifierMappingRepository;
     }
 
-    public Stream<Document> getPagedDocumentList(int offset, int limit, Long patientId, List<DocumentSort> documentSortList) {
+    public ResponseEntity<List<Document>> getDocumentList(Long patientId) {
         Map<String, String> parameterMap = new HashMap<>();
-        parameterMap.put("page", Integer.toString(offset / pageSize));
-        parameterMap.put("limit", Long.toString(limit));
-        parameterMap.put("pageSize", Integer.toString(pageSize));
         parameterMap.put("patientId", Long.toString(patientId));
+        String url = "http://distillehr-document-storage-service/document/documentsByPatientId/{patientId}";
+        ResponseEntity<List<Document>> documentResponseEntity = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Document>>() {}, parameterMap);
+        return documentResponseEntity;
+    }
 
-        logger.info("Page is " + offset / pageSize);
-        logger.info("Limit is " + limit);
+    public ResponseEntity<List<Document>> retrieveDocumentList(@PathVariable(value = "personId") String personId) throws Exception {
 
-        String url = "http://distillehr-document-storage-service/documents/search/patientId?patientId={patientId}&page={page}&limit={limit}&size={pageSize}&projection=full";
+        ResponseEntity<List<Document>> documentResponseEntity = null;
 
-        for (DocumentSort documentSort : documentSortList) {
-            logger.info("Processing " + documentSort.toString());
-            String direction = "asc";
-            if (documentSort.isDescending()) {
-                direction = "desc";
-            }
-            url = url + "&sort=" + documentSort.getPropertyName() + "," + direction;
+        IdentifierMapping identifierMapping =
+                identifierMappingRepository.
+                        findByTargetSystemTypeAndTargetIdentifierTypeAndTargetIdentifierValue(
+                                SystemType.CERNER_MILLENNIUM,
+                                IdentifierType.CERNER_MILLENNIUM_PERSON_NUMBER,
+                                Long.parseLong(personId));
+
+        if (identifierMapping == null) {
+            logger.warn("No identifierMapping found for personId " + personId + ". Returning empty documentMappingList.");
+            return documentResponseEntity;
         }
 
-        ResponseEntity<PagedResources<Resource<Document>>> documentResponseEntity = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, new TypeReferences.PagedResourcesType<Resource<Document>>() {}, parameterMap);
-        return documentResponseEntity.getBody().getContent().stream().map(Resource::getContent);
+        if ((identifierMapping.getSourceSystemType() == SystemType.HPF) &&
+                (identifierMapping.getSourceIdentifierType() == IdentifierType.HPF_PATIENT_NUMBER)) {
+            Map<String, String> parameterMap = new HashMap<>();
+            parameterMap.put("patientId", identifierMapping.getSourceIdentifierValue().toString());
+            String url = "http://distillehr-document-storage-service/document/documentsByPatientId/{patientId}";
+            documentResponseEntity = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Document>>() {}, parameterMap);
+        }
+
+        return documentResponseEntity;
     }
 
     public long getDocumentCount(Long patientId) {
