@@ -63,12 +63,20 @@ public class DocumentStorageServiceClient {
             return documentResponseEntity;
         }
 
+        if ((identifierMapping.getSourceSystemType() == SystemType.MEDHOST_ENTERPRISE) &&
+                (identifierMapping.getSourceIdentifierType() == IdentifierType.MEDHOST_ENTERPRISE_PATIENT_NUMBER)) {
+            Map<String, String> parameterMap = new HashMap<>();
+            parameterMap.put("patientId", identifierMapping.getSourceIdentifierValue().toString());
+            String url = "http://distillehr-document-storage-service/document/documentsByPatientId/{patientId}";
+            return restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Document>>() {}, parameterMap);
+        }
+
         if ((identifierMapping.getSourceSystemType() == SystemType.HPF) &&
                 (identifierMapping.getSourceIdentifierType() == IdentifierType.HPF_PATIENT_NUMBER)) {
             Map<String, String> parameterMap = new HashMap<>();
             parameterMap.put("patientId", identifierMapping.getSourceIdentifierValue().toString());
             String url = "http://distillehr-document-storage-service/document/documentsByPatientId/{patientId}";
-            documentResponseEntity = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Document>>() {}, parameterMap);
+            return restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Document>>() {}, parameterMap);
         }
 
         return documentResponseEntity;
