@@ -1,6 +1,13 @@
+/*
+ * Copyright (C) Projective Software LLC, 2017 - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 package com.projectivesoftware.viewer.service;
 
-import com.projectivesoftware.viewer.domain.*;
+import com.projectivesoftware.viewer.domain.Document;
+import com.projectivesoftware.viewer.domain.DocumentStreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +19,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayOutputStream;
@@ -28,65 +34,26 @@ public class DocumentStorageServiceClient {
 
     private final RestTemplate restTemplate;
 
-    private final IdentifierMappingRepository identifierMappingRepository;
-
     @Autowired
-    public DocumentStorageServiceClient(RestTemplate restTemplate,
-                                        IdentifierMappingRepository identifierMappingRepository) {
+    public DocumentStorageServiceClient(RestTemplate restTemplate) {
         Assert.notNull(restTemplate, "restTemplate must not be null!");
-        Assert.notNull(identifierMappingRepository, "identifierMappingRepository must not be null!");
         this.restTemplate = restTemplate;
-        this.identifierMappingRepository = identifierMappingRepository;
     }
 
-    public ResponseEntity<List<Document>> getDocumentList(Long patientId) {
+    public ResponseEntity<List<Document>> getDocumentList(String personId) {
         Map<String, String> parameterMap = new HashMap<>();
-        parameterMap.put("patientId", Long.toString(patientId));
-        String url = "http://distillehr-document-storage-service/document/documentsByPatientId/{patientId}";
+        parameterMap.put("personId", personId);
+        String url = "http://distillehr-document-storage-service/document/documentsByPersonId/{personId}";
         ResponseEntity<List<Document>> documentResponseEntity = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Document>>() {}, parameterMap);
         return documentResponseEntity;
     }
 
-    public ResponseEntity<List<Document>> retrieveDocumentList(@PathVariable(value = "personId") String personId) throws Exception {
-
-        ResponseEntity<List<Document>> documentResponseEntity = null;
-
-        IdentifierMapping identifierMapping =
-                identifierMappingRepository.
-                        findByTargetSystemTypeAndTargetIdentifierTypeAndTargetIdentifierValue(
-                                SystemType.CERNER_MILLENNIUM,
-                                IdentifierType.CERNER_MILLENNIUM_PERSON_NUMBER,
-                                Long.parseLong(personId));
-
-        if (identifierMapping == null) {
-            logger.warn("No identifierMapping found for personId " + personId + ". Returning empty documentMappingList.");
-            return documentResponseEntity;
-        }
-
-        if ((identifierMapping.getSourceSystemType() == SystemType.MEDHOST_ENTERPRISE) &&
-                (identifierMapping.getSourceIdentifierType() == IdentifierType.MEDHOST_ENTERPRISE_PATIENT_NUMBER)) {
-            Map<String, String> parameterMap = new HashMap<>();
-            parameterMap.put("patientId", identifierMapping.getSourceIdentifierValue().toString());
-            String url = "http://distillehr-document-storage-service/document/documentsByPatientId/{patientId}";
-            return restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Document>>() {}, parameterMap);
-        }
-
-        if ((identifierMapping.getSourceSystemType() == SystemType.HPF) &&
-                (identifierMapping.getSourceIdentifierType() == IdentifierType.HPF_PATIENT_NUMBER)) {
-            Map<String, String> parameterMap = new HashMap<>();
-            parameterMap.put("patientId", identifierMapping.getSourceIdentifierValue().toString());
-            String url = "http://distillehr-document-storage-service/document/documentsByPatientId/{patientId}";
-            return restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<List<Document>>() {}, parameterMap);
-        }
-
-        return documentResponseEntity;
-    }
-
-    public long getDocumentCount(Long patientId) {
+    public long getDocumentCount(String personId) {
         Map<String, String> parameterMap = new HashMap<>();
-        parameterMap.put("patientId", Long.toString(patientId));
-        logger.info("Getting document count for " + patientId);
-        ResponseEntity<PagedResources<Document>> documentResponseEntity = restTemplate.exchange("http://distillehr-document-storage-service/documents/search/patientId?patientId={patientId}&page=0&size=1", HttpMethod.GET, HttpEntity.EMPTY, new TypeReferences.PagedResourcesType<Document>() {}, parameterMap);
+        parameterMap.put("personId", personId);
+        logger.info("Getting document count for " + personId);
+        ResponseEntity<PagedResources<Document>> documentResponseEntity = restTemplate.exchange("http://distillehr-document-storage-service/documents/search/personId?personId={personId}&page=0&size=1", HttpMethod.GET, HttpEntity.EMPTY, new TypeReferences.PagedResourcesType<Document>() {
+        }, parameterMap);
         long documentCount = documentResponseEntity.getBody().getMetadata().getTotalElements();
         logger.info("Returned document count is " + documentCount);
         return documentCount;

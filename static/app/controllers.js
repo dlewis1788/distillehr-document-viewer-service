@@ -23,7 +23,7 @@ distillehrApp.config(distillehrRouteConfig);
 distillehrApp.controller('DocumentController', function($scope, $routeParams, $http) {
     $scope.id = $routeParams.id;
     $scope.username = $routeParams.username;
-    $http.get('/retrieveDocumentList/cernerMillennium/person/' + $scope.id).success(function(response) {
+    $http.get('/documentViewer/retrieveDocumentList/cernerMillennium/person/' + $scope.id).success(function (response) {
         $scope.documentList = response;
     });
 });
