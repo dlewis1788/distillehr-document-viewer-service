@@ -61,7 +61,7 @@ compileJava.dependsOn(processResources)
 
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.BUILD-SNAPSHOT"
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.M3"
 	}
 }
 
