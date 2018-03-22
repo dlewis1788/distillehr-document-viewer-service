@@ -1,4 +1,4 @@
-FROM openjdk:9.0.1-11-jre
+FROM openjdk:9.0.4-12-jre
 VOLUME /tmp
 ADD distillehr-document-viewer-service-0.0.1-SNAPSHOT.jar distillehr-document-viewer-service-0.0.1-SNAPSHOT.jar
 RUN sh -c 'touch /distillehr-document-viewer-service-0.0.1-SNAPSHOT.jar'
