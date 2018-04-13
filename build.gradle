@@ -5,19 +5,19 @@
  */
 
 buildscript {
-	ext {
-		springBootVersion = '2.0.1.RELEASE'
-	}
-	repositories {
+    ext {
+        springBootVersion = '2.0.1.RELEASE'
+    }
+    repositories {
         maven { url "https://psmvn1.projectivesoftware.com:8443/repository/iima-maven-repository-1/" }
         maven { url "http://repo.spring.io/plugins-release" }
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath('se.transmode.gradle:gradle-docker:1.2')
         classpath('gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.4.17')
         classpath('org.springframework.build.gradle:propdeps-plugin:0.0.7')
-	}
+    }
 }
 
 plugins {
@@ -40,31 +40,37 @@ repositories {
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-data-rest')
-	compile('org.springframework.cloud:spring-cloud-starter-config')
-	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
-	compile('org.springframework.cloud:spring-cloud-starter-netflix-ribbon')
-	compile('org.springframework.cloud:spring-cloud-starter-config')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-data-rest')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.springframework.boot:spring-boot-starter-aop')
-	compile('org.springframework.retry:spring-retry')
+    compile('org.springframework.cloud:spring-cloud-starter-config')
+    compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+    compile('org.springframework.cloud:spring-cloud-starter-netflix-ribbon')
+    compile('org.springframework.cloud:spring-cloud-starter-config')
+    compile('org.springframework.boot:spring-boot-starter-data-rest')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-aop')
+    compile('org.springframework.retry:spring-retry')
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
-	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.8.9'
-	runtime('com.h2database:h2')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+    /*
+     * Required for Java 9 compatibility
+     */
+    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.8.9'
+    runtime('com.h2database:h2')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
     optional('org.springframework.boot:spring-boot-configuration-processor')
 }
 
 compileJava.dependsOn(processResources)
 
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.M9"
-	}
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.M9"
+    }
 }
 
 idea {
@@ -78,14 +84,14 @@ idea {
 }
 
 task buildDocker(type: Docker, dependsOn: build) {
-	applicationName = "ps-" + jar.baseName
-	tag = 'projective-software/' + applicationName
-	tagVersion = 'latest'
-	dockerfile = file('src/main/docker/Dockerfile')
-	doFirst {
-		copy {
-			from jar
-			into stageDir
-		}
-	}
+    applicationName = "ps-" + jar.baseName
+    tag = 'projective-software/' + applicationName
+    tagVersion = 'latest'
+    dockerfile = file('src/main/docker/Dockerfile')
+    doFirst {
+        copy {
+            from jar
+            into stageDir
+        }
+    }
 }
