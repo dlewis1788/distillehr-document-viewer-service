@@ -6,7 +6,7 @@
 
 buildscript {
     ext {
-        springBootVersion = '2.0.1.RELEASE'
+        springBootVersion = '2.0.2.RELEASE'
     }
     repositories {
         maven { url "https://psmvn1.projectivesoftware.com:8443/repository/iima-maven-repository-1/" }
@@ -69,7 +69,7 @@ compileJava.dependsOn(processResources)
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.RC1"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.BUILD-SNAPSHOT"
     }
 }
 
