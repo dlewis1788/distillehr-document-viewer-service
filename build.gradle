@@ -16,11 +16,8 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath('com.bmuschko:gradle-docker-plugin:3.2.9')
         classpath('io.spring.gradle:propdeps-plugin:0.0.9.RELEASE')
+        classpath('gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.5.2')
     }
-}
-
-plugins {
-    id "com.gorylenko.gradle-git-properties" version "1.5.1"
 }
 
 apply plugin: 'java'
@@ -29,6 +26,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'idea'
 apply plugin: 'com.bmuschko.docker-remote-api'
 apply plugin: 'propdeps'
+apply plugin: 'com.gorylenko.gradle-git-properties'
 
 version = '0.0.1-SNAPSHOT'
 
