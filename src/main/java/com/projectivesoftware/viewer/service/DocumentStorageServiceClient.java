@@ -12,8 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.mvc.TypeReferences;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.core.TypeReferences;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +52,7 @@ public class DocumentStorageServiceClient {
         Map<String, String> parameterMap = new HashMap<>();
         parameterMap.put("personId", personId);
         logger.info("Getting document count for " + personId);
-        ResponseEntity<PagedResources<Document>> documentResponseEntity = restTemplate.exchange("http://distillehr-document-storage-service/documents/search/personId?personId={personId}&page=0&size=1", HttpMethod.GET, HttpEntity.EMPTY, new TypeReferences.PagedResourcesType<Document>() {
+        ResponseEntity<PagedModel<Document>> documentResponseEntity = restTemplate.exchange("http://distillehr-document-storage-service/documents/search/personId?personId={personId}&page=0&size=1", HttpMethod.GET, HttpEntity.EMPTY, new TypeReferences.PagedModelType<Document>() {
         }, parameterMap);
         long documentCount = documentResponseEntity.getBody().getMetadata().getTotalElements();
         logger.info("Returned document count is " + documentCount);
