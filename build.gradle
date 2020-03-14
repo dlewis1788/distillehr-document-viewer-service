@@ -14,7 +14,7 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath('com.bmuschko:gradle-docker-plugin:3.2.9')
+        classpath('com.bmuschko:gradle-docker-plugin:6.3.0')
         classpath('io.spring.gradle:propdeps-plugin:0.0.9.RELEASE')
         classpath('gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.5.2')
     }
@@ -80,26 +80,24 @@ idea {
     }
 }
 
-import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 
 task createDockerfile(type: Dockerfile) {
-    destFile = project.file('build/docker/Dockerfile')
-    from 'openjdk:10-jre'
+    from 'openjdk:13'
     copyFile jar.archiveName, '/' + jar.archiveName
-    entryPoint 'sh', '-c', 'java ${JAVA_OPTS} --add-modules java.se.ee -jar /' + jar.archiveName
+    entryPoint 'sh', '-c', 'java ${JAVA_OPTS} -jar /' + jar.archiveName
+}
+
+task buildImage(type: DockerBuildImage) {
+    dependsOn createDockerfile
+    images.add('projective-software/' + "ps-" + jar.baseName + ':latest')
 }
 
 task syncJarFile(type: Sync) {
     dependsOn assemble
     from jar.archivePath
-    into createDockerfile.destFile.parentFile
-}
-
-task buildImage(type: DockerBuildImage) {
-    dependsOn createDockerfile
-    inputDir = createDockerfile.destFile.parentFile
-    tag = 'projective-software/' + "ps-" + jar.baseName + ':latest'
+    into buildImage.inputDir
 }
 
 createDockerfile.dependsOn(syncJarFile)
