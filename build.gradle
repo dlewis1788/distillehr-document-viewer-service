@@ -6,7 +6,7 @@
 
 buildscript {
     ext {
-        springBootVersion = '2.2.5.RELEASE'
+        springBootVersion = '2.1.13.RELEASE'
     }
     repositories {
         maven { url "https://psmvn1.projectivesoftware.com:8443/repository/iima-maven-repository-1/" }
@@ -66,7 +66,7 @@ compileJava.dependsOn(processResources)
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR3"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Greenwich.SR5"
     }
 }
 
@@ -84,7 +84,7 @@ import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 
 task createDockerfile(type: Dockerfile) {
-    from 'openjdk:13'
+    from 'openjdk:12'
     copyFile jar.archiveName, '/' + jar.archiveName
     entryPoint 'sh', '-c', 'java ${JAVA_OPTS} -jar /' + jar.archiveName
 }
