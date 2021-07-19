@@ -9,7 +9,7 @@ buildscript {
         springBootVersion = '2.1.13.RELEASE'
     }
     repositories {
-        maven { url "https://psmvn1.projectivesoftware.com:8443/repository/iima-maven-repository-1/" }
+        maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://repo.spring.io/plugins-release" }
     }
     dependencies {
@@ -17,6 +17,7 @@ buildscript {
         classpath('com.bmuschko:gradle-docker-plugin:6.3.0')
         classpath('io.spring.gradle:propdeps-plugin:0.0.9.RELEASE')
         classpath('gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.5.2')
+        classpath('gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.1.1')
     }
 }
 
@@ -33,7 +34,8 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-    maven { url "https://psmvn1.projectivesoftware.com:8443/repository/iima-maven-repository-1/" }
+    mavenCentral()
+    maven { url "artifactregistry://us-central1-maven.pkg.dev/fine-serenity-317913/iima-maven-repository-1" }
 }
 
 dependencies {
