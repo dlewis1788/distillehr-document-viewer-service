@@ -14,7 +14,7 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath('com.bmuschko:gradle-docker-plugin:6.7.0')
+        classpath('com.bmuschko:gradle-docker-plugin:7.1.0')
         classpath('gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.5.2')
         classpath('gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.1.1')
     }
